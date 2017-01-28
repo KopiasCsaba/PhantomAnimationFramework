@@ -2,6 +2,8 @@
 
 Render animation frames with the awesome [PhantomJS](http://phantomjs.org)!
 
+See it in action: https://youtu.be/Lts-0M6HN-k
+
 With this examples, you can make timing independent animations in JavaScript, that could be relatively easily debugged / managed from a browser, and then be rendered into frames with PhantomJS.
 
 You need to write your animaton as it can be seen in the example, you need to unroll it to unique steps, as we need to get rid of timing errors. You want your animation to be exactly the same number of frame every time (imagine if you have imported it into an NLE, and the number of frames changes...)
@@ -11,6 +13,8 @@ You need to write your animaton as it can be seen in the example, you need to un
  * Move/Resize the rectangles as you need it
  * Rename the rectangles in the debug window, this will be the output filename prefix
  * When you finished, copy and paste the exported code back into the html.
+ * Execute the gen.sh And your frames will be generated!
+ * There is three sets of images for every "name": name_in_####.png, name_mid.png, name_out_####.png, this way you can insert the first and last sequence easily into your NLE with the single frame between them. This way you can easily set the duration of the effect by setting the single frame's length. Otherwise you would be required to freeze the last frame, and mess around with that.
  
 # How to code it?
  * Write your animation steps in a form of loops and step-by-step functions that will be executed sequentially. Avoid using any time based operation or effect.
