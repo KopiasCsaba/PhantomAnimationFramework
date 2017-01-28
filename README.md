@@ -51,4 +51,6 @@ So the next frame will be something_0000.png, after that something_0001.png.
 * The debug toolbar shows up
 * The background images ('#images img') are visible
 * All  the '.export'  is visible, you can move and resize them
+* When you press "RUN" that will play the animation, but remember it's speed has nothing to do with anything. 
+  Your browser probably fires frame rendering around 60fps, but you have a fixed amount of animation steps, so it depends on how fast you will play back your frames. You can tweak the requestAnimationFrame hook if you want to slow it down.
  
