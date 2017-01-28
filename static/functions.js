@@ -109,7 +109,11 @@ $.widget("kcs.debugtoolbar", {
             .appendTo(main);
 
         this.duplicateButton = $('<input>', {type: 'button', value: 'Duplicate selected'})
-            .click(this._duplicate.bind(this))
+            .click(this._duplicateSelected.bind(this))
+            .appendTo(main);
+
+        this.deleteButton = $('<input>', {type: 'button', value: 'Delete selected'})
+            .click(this._deleteSelected.bind(this))
             .appendTo(main);
 
         this.runButton = $('<input>', {type: 'button', value: 'RUN'})
@@ -136,7 +140,7 @@ $.widget("kcs.debugtoolbar", {
 
         clonedElements.each(function (index, element) {
             element = $(element);
-            element.removeClass('ui-resizable ui-draggable ui-draggable-handle');
+            element.removeClass('ui-resizable ui-draggable ui-draggable-handle ui-resizable-resizing');
             element.find('.ui-resizable-handle').remove();
             this.exportArea.val(this.exportArea.val() + "\n" + element.get(0).outerHTML);
 
@@ -167,7 +171,7 @@ $.widget("kcs.debugtoolbar", {
      * @private
      */
 
-    _duplicate: function () {
+    _duplicateSelected: function () {
         var dup = this.selectedExportNode.clone();
         dup.attr('data-name', dup.attr('data-name') + "_");
         // resizable and draggable bugs after cloning, so reinit, destroy and init...
@@ -176,6 +180,11 @@ $.widget("kcs.debugtoolbar", {
             .draggable().draggable('destroy').draggable()
             .appendTo(this.element)
             .css('position', '')
+    },
+    _deleteSelected: function () {
+        this.selectedExportNode.remove();
+        this.nameField.val('');
+        this._export();
     },
     /**
      * Sets the code that should be executed on manual or phantomjs running of the effects
