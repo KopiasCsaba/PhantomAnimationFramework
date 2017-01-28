@@ -38,6 +38,7 @@ This will set the prefix of the frame file names that will be rendered. When cha
 So the next frame will be something_0000.png, after that something_0001.png.
 
  * All node that has 'export' class will be exported with the filename prefix that is in the node's data-name attribute.
+ * Feel free to customize it for your own needs. This is just a bootstrap for you to get productive quickly, but remember that this is not a higly polished userfriendly tool.
  
 # How does it run?
 ## When you start the render in PhantomJS:
