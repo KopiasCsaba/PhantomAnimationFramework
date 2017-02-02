@@ -87,112 +87,56 @@ function isInsideOfPhantomJS() {
 }
 
 
-$.widget("kcs.debugtoolbar", {
+$.widget("kcs.debugwindow", {
 
     _create: function () {
-
-
-        if (isInsideOfPhantomJS()) {
-            $('#images img').css('visibility', 'hidden');
-        } else {
+        if (!isInsideOfPhantomJS()) {
             this._mkGui();
-            this._export();
         }
 
+        // Bind CTRL-SHIFT-L To RUN
+        $(window).keypress(function (e) {
+            if (e.ctrlKey && e.shiftKey && e.which == 12) {
+                this._run();
+            }
+        }.bind(this));
     },
-
+    /**
+     * Creates the debug gui
+     * @private
+     */
     _mkGui: function () {
-        var main = $('<div>', {id: 'debugToolbar'}).draggable();
+        var main = $('<div>', {id: 'debug_toolbar'}).draggable(
+            {
+                stop: function (e, ui) { // Store the window's position
+                    sessionStorage.setItem('dbg_x', ui.position.left);
+                    sessionStorage.setItem('dbg_y', ui.position.top);
+                }
+            }
+        );
 
-        this.nameField = $('<input>', {type: 'text'})
-            .on('keyup', this._setExportName.bind(this))
-            .appendTo(main);
-
-        this.duplicateButton = $('<input>', {type: 'button', value: 'Duplicate selected'})
-            .click(this._duplicateSelected.bind(this))
-            .appendTo(main);
-
-        this.deleteButton = $('<input>', {type: 'button', value: 'Delete selected'})
-            .click(this._deleteSelected.bind(this))
-            .appendTo(main);
+        // Restore the window's position
+        main.css({
+            top: sessionStorage.getItem('dbg_y'),
+            left: sessionStorage.getItem('dbg_x')
+        });
 
         this.runButton = $('<input>', {type: 'button', value: 'RUN'})
             .click(this._run.bind(this))
             .appendTo(main);
 
-        this.exportArea = $('<textarea>').appendTo(main);
+        this.extraContentArea = $('<div>', {id: 'debug_extra'}).appendTo(main);
 
         $('body').append(main);
 
-        $(".export")
-            .resizable()
-            .draggable();
-
-        this.element.on('mousedown', '.export', this._updateExportName.bind(this));
-        this.element.on('mouseup', '.export', this._export.bind(this));
     },
 
-    _export: function () {
-
-        this.exportArea.val('');
-        var elements = this.element.find('.export');
-        var clonedElements = elements.clone();
-
-        clonedElements.each(function (index, element) {
-            element = $(element);
-            element.removeClass('ui-resizable ui-draggable ui-draggable-handle ui-resizable-resizing');
-            element.find('.ui-resizable-handle').remove();
-            this.exportArea.val(this.exportArea.val() + "\n" + element.get(0).outerHTML);
-
-
-        }.bind(this))
-
-
-    },
-    /**
-     * Show the currently selected object's name in the nameField
-     * @param e
-     * @private
-     */
-    _updateExportName: function (e) {
-        this.selectedExportNode = $(e.target.closest('.export'));
-        this.nameField.val(this.selectedExportNode.data('name'));
-    },
-    /**
-     * On keyup, if the nameField changed
-     * @private
-     */
-    _setExportName: function () {
-        this.selectedExportNode.attr('data-name', this.nameField.val());
-        this._export();
-    },
-    /**
-     * Duplicates and reinitializes the currently selected exportable
-     * @private
-     */
-
-    _duplicateSelected: function () {
-        var dup = this.selectedExportNode.clone();
-        dup.attr('data-name', dup.attr('data-name') + "_");
-        // resizable and draggable bugs after cloning, so reinit, destroy and init...
-        dup
-            .resizable().resizable('destroy').resizable()
-            .draggable().draggable('destroy').draggable()
-            .appendTo(this.element)
-            .css('position', '')
-    },
-    _deleteSelected: function () {
-        this.selectedExportNode.remove();
-        this.nameField.val('');
-        this._export();
-    },
     /**
      * Sets the code that should be executed on manual or phantomjs running of the effects
      * @param cb
      */
     setEffect: function (cb) {
         this.effect = cb;
-
         if (isInsideOfPhantomJS()) {
             this._run();
         }
@@ -219,9 +163,9 @@ $.widget("kcs.debugtoolbar", {
 
             phQuit()
         }
-        phSnap();
     },
 
 
-})
-;
+});
+
+

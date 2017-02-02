@@ -29,6 +29,11 @@
             -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.45), inset 0px 0px 10px 0px rgba(0, 0, 0, 0.45);
         }
 
+        #debug_extra textarea {
+            display: block;
+            width: 100%;
+            height: 300px;
+        }
 
     </style>
     <script type="text/javascript">
@@ -81,10 +86,113 @@
 
         $(window).ready(function () {
             $('#export_blocks')
-                .debugtoolbar()
-                .debugtoolbar('setEffect', jsanimation);
+                .debugwindow()
+                .debugwindow('setEffect', jsanimation);
+
+            $('#debug_extra').boxmanipulator();
+
+            if (isInsideOfPhantomJS()) {
+                $('#images img').css('visibility', 'hidden');
+            }
         });
 
+
+        $.widget("kcs.boxmanipulator", {
+
+            _create: function () {
+
+
+                if (!isInsideOfPhantomJS()) {
+                    this._mkGui();
+                    this._export();
+                }
+
+            },
+
+            _mkGui: function () {
+
+
+                this.nameField = $('<input>', {type: 'text'})
+                    .on('keyup', this._setExportName.bind(this))
+                    .appendTo(this.element);
+
+                this.duplicateButton = $('<input>', {type: 'button', value: 'Duplicate selected'})
+                    .click(this._duplicateSelected.bind(this))
+                    .appendTo(this.element);
+
+                this.deleteButton = $('<input>', {type: 'button', value: 'Delete selected'})
+                    .click(this._deleteSelected.bind(this))
+                    .appendTo(this.element);
+
+
+                this.exportArea = $('<textarea>').appendTo(this.element);
+
+
+                $(".export")
+                    .resizable()
+                    .draggable();
+
+                $('#export_blocks').on('mousedown', '.export', this._updateExportName.bind(this));
+                $('#export_blocks').on('mouseup', '.export', this._export.bind(this));
+            },
+
+            _export: function () {
+
+                this.exportArea.val('');
+                var elements = $('#export_blocks').find('.export');
+                var clonedElements = elements.clone();
+
+                clonedElements.each(function (index, element) {
+                    element = $(element);
+                    element.removeClass('ui-resizable ui-draggable ui-draggable-handle ui-resizable-resizing');
+                    element.find('.ui-resizable-handle').remove();
+                    this.exportArea.val(this.exportArea.val() + "\n" + element.get(0).outerHTML);
+
+
+                }.bind(this))
+
+
+            },
+            /**
+             * Show the currently selected object's name in the nameField
+             * @param e
+             * @private
+             */
+            _updateExportName: function (e) {
+                this.selectedExportNode = $(e.target.closest('.export'));
+                this.nameField.val(this.selectedExportNode.data('name'));
+            },
+            /**
+             * On keyup, if the nameField changed
+             * @private
+             */
+            _setExportName: function () {
+                this.selectedExportNode.attr('data-name', this.nameField.val());
+                this._export();
+            },
+            /**
+             * Duplicates and reinitializes the currently selected exportable
+             * @private
+             */
+
+            _duplicateSelected: function () {
+                var dup = this.selectedExportNode.clone();
+                dup.attr('data-name', dup.attr('data-name') + "_");
+                // resizable and draggable bugs after cloning, so reinit, destroy and init...
+                dup
+                    .resizable().resizable('destroy').resizable()
+                    .draggable().draggable('destroy').draggable()
+                    .appendTo($('#export_blocks'))
+                    .css('position', '')
+            },
+            _deleteSelected: function () {
+                this.selectedExportNode.remove();
+                this.nameField.val('');
+                this._export();
+            },
+
+
+        });
 
     </script>
 

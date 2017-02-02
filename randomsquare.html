@@ -1,0 +1,135 @@
+<!--
+*
+* Copyright 2016 Kopiás Csaba [ http://kopiascsaba.hu ]
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <script src="static/jquery.min.js"></script>
+    <script src="static/jquery-ui.min.js"></script>
+    <script src="static/functions.js"></script>
+
+    <link rel="stylesheet" href="static/jquery-ui.css">
+    <link rel="stylesheet" href="static/functions.css">
+
+    <style type="text/css">
+
+        .rect {
+            background-color: black;
+            margin: 10px 0px 0px 10px;
+            width: 30px;
+            height: 30px;
+            float: left;
+        }
+
+        #export_blocks {
+            width: 1920px;
+        }
+
+    </style>
+    <script type="text/javascript">
+
+
+        function jsanimation() {
+
+            var frames = 210;
+            var dotCount = 50;
+            var dotLifetime = 5;
+            var dotShowupFreqInFrames = 10;
+
+            var exportables = $('#export_blocks').find('.rect');
+
+
+            var ease = jQuery.easing.swing;
+
+
+            addToQueue(function () {
+                phSetName("intro");
+            }, []);
+
+
+            var dotLifeTimeCounter = 0;
+            var dots = [];
+
+            for (var frame = 0; frame < frames; frame++) {
+
+
+                if (dotLifeTimeCounter > dotLifetime) {
+                    dots = [];
+                }
+
+                if (frame % dotShowupFreqInFrames == 0) {
+                    for (var d = 0; d < dotCount; d++) {
+                        dots.push(getRandomArbitrary(0, exportables.length - 1))
+                    }
+                    dotLifeTimeCounter = 0;
+                }
+
+                dotLifeTimeCounter++;
+                addToQueue(function (dots, frame) {
+                    exportables.each(function (index, node) {
+//                        console.log(node, index);
+                        node = $(node);
+
+                        var c = getRandomArbitrary(100, 200);
+                        var color = 'rgb(' + c + ',' + c + ',' + c + ')';
+                        if (dots.indexOf(index) > -1) {
+                            // Blue, with a bit of randomness in the lightness
+//                            color = "hsla(196,85%," + getRandomArbitrary(90, 100) + "%,1)";
+                            color = "#2894FF";
+//                            console.log(index, frame, dots, dots.indexOf(index), frame % dotShowupFreqInFrames, color)
+                        }
+
+
+                        node.css('background-color', color);
+
+
+                    });
+                }, [dots, frame]);
+                addToQueue(function () {
+                    phSnap();
+                }, []);
+            }
+
+        }
+
+
+        $(window).ready(function () {
+            var eb = $('#export_blocks');
+            for (var i = 0; i < 1296; i++) {
+                $('<div>', {class: 'rect'}).appendTo(eb);
+            }
+            $('#export_blocks')
+                .debugwindow()
+                .debugwindow('setEffect', jsanimation);
+
+            if (isInsideOfPhantomJS()) {
+                $('#images img').css('visibility', 'hidden');
+            }
+        });
+        /**
+         * Returns a random number between min (inclusive) and max (exclusive)
+         */
+        function getRandomArbitrary(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+
+    </script>
+
+</head>
+<body>
+
+<div id="export_blocks">
+
+</div>
+
+</body>
