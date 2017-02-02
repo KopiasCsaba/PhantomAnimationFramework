@@ -16,10 +16,10 @@
 
     <script src="static/jquery.min.js"></script>
     <script src="static/jquery-ui.min.js"></script>
-    <script src="static/functions.js"></script>
+    <script src="static/framework.js"></script>
 
     <link rel="stylesheet" href="static/jquery-ui.css">
-    <link rel="stylesheet" href="static/functions.css">
+    <link rel="stylesheet" href="static/framework.css">
 
     <style type="text/css">
 
@@ -37,6 +37,19 @@
 
     </style>
     <script type="text/javascript">
+
+        $(window).ready(function () {
+            $('#export_blocks')
+                .debugwindow()
+                .debugwindow('setEffect', jsanimation);
+
+            $('#debug_extra').boxmanipulator();
+
+            
+            if (isInsideOfPhantomJS()) {
+                $('#images img').css('visibility', 'hidden');
+            }
+        });
 
 
         function jsanimation() {
@@ -82,19 +95,6 @@
             });
 
         }
-
-
-        $(window).ready(function () {
-            $('#export_blocks')
-                .debugwindow()
-                .debugwindow('setEffect', jsanimation);
-
-            $('#debug_extra').boxmanipulator();
-
-            if (isInsideOfPhantomJS()) {
-                $('#images img').css('visibility', 'hidden');
-            }
-        });
 
 
         $.widget("kcs.boxmanipulator", {
