@@ -38,6 +38,7 @@
     </style>
     <script type="text/javascript">
 
+
         $(window).ready(function () {
             $('#export_blocks')
                 .debugwindow()
@@ -45,7 +46,7 @@
 
             $('#debug_extra').boxmanipulator();
 
-            
+
             if (isInsideOfPhantomJS()) {
                 $('#images img').css('visibility', 'hidden');
             }
@@ -76,6 +77,7 @@
                 for (var i = 0.0; i <= 1.0; i += 1.0 / frames) {
                     addToQueue(function (i) {
                         node.css('opacity', ease(i));
+                        phSnap();
                     }, [i]);
                 }
                 // Render the middle of the animation
@@ -89,6 +91,7 @@
                 for (var i = 1.0; i >= 0.0; i -= 1.0 / frames) {
                     addToQueue(function (i) {
                         node.css('opacity', ease(i));
+                        phSnap();
                     }, [i]);
                 }
 
@@ -100,12 +103,8 @@
         $.widget("kcs.boxmanipulator", {
 
             _create: function () {
-
-
-                if (!isInsideOfPhantomJS()) {
-                    this._mkGui();
-                    this._export();
-                }
+                this._mkGui();
+                this._export();
 
             },
 

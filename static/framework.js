@@ -121,7 +121,7 @@ $.widget("kcs.debugwindow", {
             left: sessionStorage.getItem('dbg_x')
         });
 
-        this.runButton = $('<input>', {type: 'button', value: 'RUN'})
+        this.runButton = $('<input>', {type: 'button', value: 'RUN', title: 'CTRL+SHIFT+L'})
             .click(this._run.bind(this))
             .appendTo(main);
 
@@ -160,7 +160,6 @@ $.widget("kcs.debugwindow", {
             (funqueue.shift())();
             window.requestAnimationFrame(this._renderFrame.bind(this))
         } else {
-
             phQuit()
         }
     },
